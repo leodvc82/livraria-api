@@ -1,5 +1,6 @@
 package com.livraria.services;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import com.livraria.modelo.Comentario;
 import com.livraria.modelo.Livro;
+import com.livraria.repository.ComentarioRepository;
 import com.livraria.repository.LivrosRepository;
 import com.livraria.services.exceptions.LivroNotFoundException;
 
@@ -16,6 +19,9 @@ public class LivrosService {
 	
 	@Autowired
 	private LivrosRepository livrosRepository;
+	
+	@Autowired
+	private ComentarioRepository comentarioRepository;
 	
 	public List<Livro> listar(){
 		return livrosRepository.findAll();
@@ -51,5 +57,16 @@ public class LivrosService {
 		buscar(livro.getId());
 	}
 	
-
+	public Comentario salvarComentario(Long livroId, Comentario comentario) {
+		Livro livro = buscar(livroId);
+		comentario.setLivro(livro);
+		comentario.setData(new Date());
+		return comentarioRepository.save(comentario);
+	}
+	
+	public List<Comentario> listarComentarios(Long livroId) {
+		Livro livro = buscar(livroId);
+		return livro.getComentarios();
+	}
+	
 }
