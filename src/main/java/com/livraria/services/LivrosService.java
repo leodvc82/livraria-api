@@ -27,6 +27,10 @@ public class LivrosService {
 		return livrosRepository.findAll();
 	}
 	
+	public List<Livro> listar(String keyword) {
+		return livrosRepository.findKeyWord(keyword);
+	}
+	
 	public Livro buscar(Long id) {
 		Optional<Livro> op = livrosRepository.findById(id);
 		if(op.isPresent()) {
@@ -68,5 +72,7 @@ public class LivrosService {
 		Livro livro = buscar(livroId);
 		return livro.getComentarios();
 	}
+
+	
 	
 }

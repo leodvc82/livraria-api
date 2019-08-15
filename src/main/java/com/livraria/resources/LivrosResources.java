@@ -2,10 +2,12 @@ package com.livraria.resources;
 
 import java.net.URI;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -45,14 +47,22 @@ public class LivrosResources {
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public ResponseEntity<?> buscar(@PathVariable("id") Long id) {
 		Livro livro = livrosService.buscar(id);
-		return ResponseEntity.status(HttpStatus.OK).body(livro);
+		
+		CacheControl cacheControl = CacheControl.maxAge(20, TimeUnit.SECONDS);
+		
+		return ResponseEntity.status(HttpStatus.OK).cacheControl(cacheControl).body(livro);
+	}
+	
+	@RequestMapping(value = "/buscar/{keyword}", method = RequestMethod.GET)
+	public ResponseEntity<?> buscarByKeyWord(@PathVariable("keyword") String keyword) {
+		List<Livro> livros = livrosService.listar(keyword);	
+		return ResponseEntity.status(HttpStatus.OK).body(livros);
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Void> deletar(@PathVariable("id") Long id) {
 		livrosService.deletar(id);
 		return ResponseEntity.noContent().build();
-		
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
